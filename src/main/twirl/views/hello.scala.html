@@ -1,4 +1,89 @@
 @()
-@layouts.html.default("Scalatra: a tiny, Sinatra-like web framework for Scala", "Welcome to Scalatra"){
-  <p>Hello, Twirl!</p>
+@layouts.html.default("BitcoinExchange", "Welcome to BitcoinExchange"){
+<p>The application uses Bitcoin historical prices data from coinbase API (<a href="https://www.coinbase.com/api/v2/prices/BTC-USD/historic?period=year">https://www.coinbase.com/api/v2/prices/BTC-USD/historic?period=year</a>) and exposes mainly 3 features:</p>
+<p><strong>Note</strong>: All Dates in the format <code>yyyy-MM-dd</code></p>
+<ol>
+<li>
+<p><code><a href="/api/bitcoin/history?period=7">/api/bitcoin/history</a></code></p>
+<p><em>Params</em>: Query String parameters</p>
+<ul>
+<li><code>from</code>: Data is returned from this date till <code>to</code> date or for the given <code>period</code></li>
+<li><code>to</code> : Data is returned till this date from <code>from</code> date or for the given <code>period</code></li>
+<li><code>period</code>: Number of days of data to return. If neither <code>from</code> or <code>to</code> are given, then this parameter is used to return last x days data</li>
+</ul>
+<p><em>Example response</em>:</p>
+<pre><code>[
+  {
+    &quot;time&quot;: &quot;2018-05-15&quot;,
+    &quot;price&quot;: 8642.02
+  },
+  {
+    &quot;time&quot;: &quot;2018-05-14&quot;,
+    &quot;price&quot;: 8577
+  },
+  {
+    &quot;time&quot;: &quot;2018-05-13&quot;,
+    &quot;price&quot;: 8551.23
+  }
+]
+</code></pre>
+</li>
+<li>
+<p><code><a href="/api/bitcoin/movingaverage?from=2018-06-01&to=2018-06-10&window=3">/api/bitcoin/movingaverage</a></code></p>
+<p><em>Params</em>: Query String parameters</p>
+<ul>
+<li><code>from</code>: Data is returned from this date till <code>to</code> date</li>
+<li><code>to</code> : Data is returned till this date from <code>from</code> date</li>
+<li><code>window</code>: Days of rolling / moving average window</li>
+</ul>
+<p><em>Example response</em>:</p>
+<pre><code>[
+    {
+        &quot;time&quot;: &quot;2018-05-10&quot;,
+        &quot;price&quot;: 9225.865
+    },
+    {
+        &quot;time&quot;: &quot;2018-05-09&quot;,
+        &quot;price&quot;: 9223.41
+    },
+    {
+        &quot;time&quot;: &quot;2018-05-08&quot;,
+        &quot;price&quot;: 9299.7
+    },
+    {
+        &quot;time&quot;: &quot;2018-05-07&quot;,
+        &quot;price&quot;: 9473.95
+    }
+]
+</code></pre>
+</li>
+<li>
+<p><code><a href="/api/bitcoin/forecast?period=7">/api/bitcoin/forecast</a></code></p>
+<p><em>Params</em>: Query String parameters</p>
+<ul>
+<li><code>period</code>: Number of future days to forecast from the current day</li>
+</ul>
+<p><em>Example response</em>:</p>
+<pre><code>[
+    {
+        &quot;time&quot;: &quot;2018-06-11&quot;,
+        &quot;price&quot;: 7448.767897957955
+    },
+    {
+        &quot;time&quot;: &quot;2018-06-12&quot;,
+        &quot;price&quot;: 7387.977594312539
+    },
+    {
+        &quot;time&quot;: &quot;2018-06-13&quot;,
+        &quot;price&quot;: 7358.876881268027
+    }
+]
+</code></pre>
+</li>
+</ol>
+<p>Any error from these API’s is returned in the following format with proper status code:</p>
+<pre><code>{
+    &quot;error&quot;: &quot;error message&quot;
+}
+</code></pre>
 }
