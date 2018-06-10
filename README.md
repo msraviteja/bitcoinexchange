@@ -121,6 +121,14 @@ src
           }
       ]
       ```
+
+Any error from these API's is returned in the following format with proper status code:
+
+```
+{
+    "error": "error message"
+}
+```
 ## References ##
   - http://scalatra.org/guides/2.6/
   - https://www.analyticsvidhya.com/blog/2018/02/time-series-forecasting-methods/
