@@ -41,14 +41,18 @@ class BitcoinController(pricesDataMap: Map[String,Price], forecastedPrices: Map[
 			}
 
 			val period = Utils.parseInt(paramPeriod.getOrElse("-1"))
-			if (Utils.isValidPeriod(period)){
+			if(!paramFrom.isEmpty && !paramTo.isEmpty){
+				val range = Utils.daysBetween(toDate,fromDate)
+				if (range < 0){
+					halt(400,Utils.makeErrorJson("Invalid query parameters 'from','to'"))
+				}
+				BitcoinProcesser.HistoryPrices(toDate, range, pricesDataMap)
+			} else if (Utils.isValidPeriod(period)){
 				if(!paramFrom.isEmpty){
 					BitcoinProcesser.HistoryPrices(Utils.addDays(fromDate,period), period, pricesDataMap)
 				}else{
 					BitcoinProcesser.HistoryPrices(toDate, period, pricesDataMap)
 				}
-			} else if(!paramFrom.isEmpty || !paramTo.isEmpty){
-				BitcoinProcesser.HistoryPrices(toDate, Utils.daysBetween(toDate,fromDate), pricesDataMap)
 			} else{
 				halt(400,Utils.makeErrorJson("Invalid query parameters 'from','to' (OR) 'period'"))
 			}
@@ -68,10 +72,10 @@ class BitcoinController(pricesDataMap: Map[String,Price], forecastedPrices: Map[
 
 		val paramFrom = params.get("from")
 		val paramTo = params.get("to")
-		val paramX = params.get("x")
+		val paramX = params.get("window")
 
 		if(paramFrom.isEmpty || paramTo.isEmpty || paramX.isEmpty){
-			halt(400,Utils.makeErrorJson("Need query parameters 'from','to','x'"))
+			halt(400,Utils.makeErrorJson("Need query parameters 'from','to','window'"))
 		}
 
 		try {
@@ -86,7 +90,7 @@ class BitcoinController(pricesDataMap: Map[String,Price], forecastedPrices: Map[
 					halt(400,Utils.makeErrorJson("Invalid date ranges"))
 				}
 			} else{
-				halt(400,Utils.makeErrorJson("Invalid parameter 'x'"))
+				halt(400,Utils.makeErrorJson("Invalid parameter 'window'"))
 			}
 		} catch {
 			case parseEx: java.text.ParseException => {

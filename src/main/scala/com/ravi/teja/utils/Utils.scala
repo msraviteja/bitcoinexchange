@@ -39,7 +39,7 @@ object Utils{
 
 	def daysBetween(to: Date, from: Date) = {
         val difference =  (to.getTime()-from.getTime())/86400000;
-        Math.abs(difference).toInt;
+        difference.toInt;
     }
 
     def addDays(d: Date, i: Int) = {
